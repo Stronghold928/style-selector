@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Three Styles — Stronghold 928</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  :root {
+    /* Default theme — overridden by JS per active style.
+       Kept here as Transitional Modern defaults so the page never flashes. */
+    --ground:    #ECE8DF;
+    --ground-2:  #E3DDD0;
+    --surface:   #F4F1EA;
+    --neutral:   #DDD1BC;
+    --neutral-2: #C9B996;
+    --accent:    #2D2F33;
+    --accent-2:  #4A5240;
+    --accent-3:  #3B4F5C;
+    --ink:       #1F2123;
+    --ink-soft:  #3F4145;
+    --stone:     #6E6F70;
+    --line:      #D2C9B8;
+    --line-2:    #B8AC93;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    transition: background 0.6s ease, color 0.6s ease;
+  }
+
+  /* Type system ----------------------------------------------------------- */
+  .serif { font-family: "Instrument Serif", "Times New Roman", serif; font-weight: 400; letter-spacing: -0.005em; }
+  .mono  { font-family: "JetBrains Mono", ui-monospace, monospace; font-weight: 400; }
+
+  .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+
+  h1, h2, h3, h4, h5 { margin: 0; font-weight: 400; }
+  p { margin: 0; text-wrap: pretty; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; }
+
+  /* Smooth color transition on most color/background props for the whole tree */
+  main, main * {
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+  }
+
+  /* Layout helpers -------------------------------------------------------- */
+  .shell { max-width: 1320px; margin: 0 auto; padding: 0 56px; }
+  @media (max-width: 820px) { .shell { padding: 0 24px; } }
+
+  /* Top bar --------------------------------------------------------------- */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px;
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    background: rgba(255,255,255,0.55);
+    border-bottom: 1px solid transparent;
+    transition: border-color .3s, background .5s;
+  }
+  .topbar.scrolled { border-bottom-color: var(--line); }
+  .topbar .brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: "JetBrains Mono", monospace; font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink);
+  }
+  .topbar .meta {
+    display: flex; align-items: center; gap: 16px;
+    font-family: "JetBrains Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--stone);
+  }
+  @media (max-width: 720px) { .topbar .meta .meta-hide { display: none; } }
+
+  /* Style switcher in topbar */
+  .style-switcher {
+    display: flex; align-items: center; gap: 0;
+    border: 1px solid var(--line-2); padding: 3px;
+    background: var(--surface);
+  }
+  .style-switcher button {
+    background: transparent; border: 0; padding: 8px 14px;
+    font-family: "JetBrains Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone);
+    cursor: default; transition: all .35s ease;
+    position: relative;
+  }
+  .style-switcher button.active {
+    background: var(--ink); color: var(--ground);
+  }
+  .style-switcher button:not(.active):hover {
+    color: var(--ink);
+  }
+
+  /* Section frame --------------------------------------------------------- */
+  section { padding: 120px 0; position: relative; }
+  section[data-bg="neutral"] { background: var(--ground-2); }
+  section[data-bg="ink"] { background: var(--ink); color: var(--ground); }
+  section[data-bg="ink"] .eyebrow { color: var(--neutral); }
+  section[data-bg="ink"] .stone { color: var(--neutral); }
+
+  .sect-head {
+    display: grid; grid-template-columns: 220px 1fr; gap: 80px;
+    align-items: baseline; margin-bottom: 64px;
+  }
+  @media (max-width: 820px) { .sect-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 40px; } }
+  .sect-code {
+    font-family: "JetBrains Mono", monospace; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone);
+    padding-top: 12px; border-top: 1px solid var(--line-2);
+  }
+  section[data-bg="ink"] .sect-code { color: var(--neutral); border-top-color: rgba(255,255,255,.22); }
+  .sect-title {
+    font-family: "Instrument Serif", serif;
+    font-size: clamp(40px, 5.4vw, 78px);
+    line-height: 0.98; letter-spacing: -0.015em;
+    max-width: 18ch;
+  }
+  .sect-title em { font-style: italic; color: var(--accent); }
+  section[data-bg="ink"] .sect-title em { color: var(--neutral-2); }
+  .sect-title .small {
+    font-family: "Geist", sans-serif;
+    font-size: 0.3em; display: block; color: var(--stone);
+    margin-top: 22px; max-width: 36ch; line-height: 1.45;
+    font-weight: 400; letter-spacing: 0;
+  }
+  section[data-bg="ink"] .sect-title .small { color: var(--neutral); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 22px; border-radius: 999px;
+    background: var(--ink); color: var(--ground);
+    border: 1px solid var(--ink);
+    font-family: "Geist", sans-serif; font-size: 13.5px;
+    letter-spacing: 0.01em; cursor: default;
+    transition: transform .15s ease, background .2s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn.ghost {
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--line-2);
+  }
+  .btn.ghost:hover { background: rgba(0,0,0,.04); }
+  .btn .arrow { transition: transform .25s ease; display: inline-block; }
+  .btn:hover .arrow { transform: translateX(3px); }
+
+  /* Focus */
+  button:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 3px;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.55; transform: scale(0.85); }
+  }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script>
+  window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "activeStyle": "european",
+    "showSidePalette": true
+  }/*EDITMODE-END*/;
+</script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="styles-data.jsx"></script>
+  <script type="text/babel" src="shared.jsx"></script>
+  <script type="text/babel" src="cover.jsx"></script>
+  <script type="text/babel" src="glance.jsx"></script>
+  <script type="text/babel" src="dna.jsx"></script>
+  <script type="text/babel" src="method.jsx"></script>
+  <script type="text/babel" src="splurge.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>

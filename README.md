@@ -1,4 +1,4 @@
-# Transitional Modern — Stronghold 928
+# Style Selector — Stronghold 928
 
 Static site showcasing three interior design directions (Transitional Modern,
 Organic Modern, European Modern) for the Stronghold 928 brief.
